@@ -1,0 +1,45 @@
+---
+title: 'Clean and Map Bird Data'
+output: html_document
+---
+
+## Clean Data
+
+```{r}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+Prepare libraries and read in data
+
+```{r, results='hide'}
+# libraries
+library(tidyverse)
+library(janitor)
+library(here)
+library(leaflet)
+
+# read data
+birds <- read_csv(here('ebird_US-CA_life_list.csv')) %>% 
+  clean_names() %>% #clean col names
+  filter(countable != 0) #remove obs that don't count
+```
+
+Add coordinates based on location column
+
+```{r}
+birds <- birds %>% 
+  mutate(latitude = case_when(location == 'Alice Keck' ~ '34.429166',
+                              location == 'Apt' ~ '34.415086',
+                              location == 'Bragg Botanical Garden' ~ '39.409404',
+                              location == 'Bridalveil Straight' ~ '37.719070',
+                              location == 'Campus Beach' ~ '34.408739',
+                              location == 'CCBER' ~ '34.419488'
+                              ),
+         longitude = case_when(location == 'Alice Keck' ~ '-119.705992',
+                               location == 'Apt' ~ '-119.857020',
+                               location == 'Bragg Botanical Garden' ~ '-123.809236',
+                               location == 'Bridalveil Straight' ~ '-119.648158',
+                               location == 'Campus Beach' ~ '-119.842396',
+                               location == 'CCBER' ~ '-119.855371'
+))
+```
